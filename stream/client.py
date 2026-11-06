@@ -187,7 +187,9 @@ class StreamClient(object):
             payload['feed_id'] = feed_id
         if user_id is not None:
             payload['user_id'] = user_id
-        return jwt.encode(payload, self.api_secret).decode("utf-8")
+        token = jwt.encode(payload, self.api_secret)
+        # PyJWT 1.x returns bytes, 2.x returns str
+        return token.decode("utf-8") if isinstance(token, bytes) else token
 
     def _make_request(self, method, relative_url, signature, service_name='api', params=None, data=None):
         params = params or {}
